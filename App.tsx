@@ -7,6 +7,8 @@ import HistorySidebar from './components/HistorySidebar';
 import StyleSelector from './components/StyleSelector';
 import { ICON_STYLES } from './constants';
 import { PanelLeft, PanelLeftClose, Terminal, Cpu, Activity } from 'lucide-react';
+// @ts-ignore
+import SplitPane from 'react-split-pane';
 
 // Polyfill for simple ID generation
 const generateId = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
@@ -22,6 +24,9 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
   const [currentStyle, setCurrentStyle] = useState<IconStyle>(ICON_STYLES[0]);
   const [previewSvgOverride, setPreviewSvgOverride] = useState<string | null>(null);
+
+  // Resize State
+  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
 
   // Computed state for current view
   const activeConversation = conversations.find(c => c.id === activeConversationId);
@@ -63,6 +68,13 @@ const App: React.FC = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
     }
   }, [conversations]);
+
+  // Handle Window Resize for Responsive Layout Switch
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const createNewChat = useCallback(() => {
     const newId = generateId();
@@ -204,9 +216,6 @@ Ensure the SVG adheres strictly to this style description.`;
 
   return (
     <div className="flex h-screen bg-background text-tech-text font-sans overflow-hidden bg-tech-grid">
-      {/* Decorative overlaid corners */}
-      <div className="fixed top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary pointer-events-none z-50 opacity-50"></div>
-      <div className="fixed bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary pointer-events-none z-50 opacity-50"></div>
       
       {/* Sidebar (Conversations) */}
       <HistorySidebar 
@@ -224,8 +233,8 @@ Ensure the SVG adheres strictly to this style description.`;
       <div className="flex-1 flex flex-col min-w-0 bg-background/50 backdrop-blur-sm relative z-10">
         
         {/* Header */}
-        <header className="h-14 border-b border-secondary flex items-center px-4 md:px-6 justify-between shrink-0 bg-surface/90">
-          <div className="flex items-center gap-4">
+        <header className="h-14 border-b border-secondary flex items-center px-2 md:px-6 justify-between shrink-0 bg-surface/90">
+          <div className="flex items-center gap-2 md:gap-4">
             <button 
               className="text-tech-text hover:text-primary transition-colors p-1"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -233,18 +242,18 @@ Ensure the SVG adheres strictly to this style description.`;
             >
               {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeft size={20} />}
             </button>
-            <div className="flex items-center gap-3 select-none">
-              <div className="w-8 h-8 bg-primary/20 border border-primary text-primary flex items-center justify-center">
+            <div className="flex items-center gap-2 md:gap-3 select-none">
+              <div className="w-8 h-8 bg-primary/20 border border-primary text-primary flex items-center justify-center shrink-0">
                 <Terminal size={18} />
               </div>
-              <div className="flex flex-col">
-                <h1 className="text-lg font-bold tracking-widest text-white leading-none">SVG_FORGE</h1>
-                <span className="text-[10px] text-primary tracking-[0.2em] font-mono opacity-80">BUILD v2.0.45</span>
+              <div className="flex flex-col min-w-0">
+                <h1 className="text-sm md:text-lg font-bold tracking-widest text-white leading-none truncate">SVG_FORGE</h1>
+                <span className="text-[10px] text-primary tracking-[0.2em] font-mono opacity-80 hidden md:block">BUILD v2.0.45</span>
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 md:gap-6 pl-2">
              <div className="hidden lg:flex items-center gap-4 text-xs font-mono text-tech-dim border-r border-secondary pr-6 h-8">
                 <div className="flex items-center gap-2">
                   <Activity size={12} className={isLoading ? "text-primary animate-pulse" : "text-tech-dim"} />
@@ -265,42 +274,56 @@ Ensure the SVG adheres strictly to this style description.`;
         </header>
 
         {/* Workspace */}
-        <main className="flex-1 flex flex-col md:flex-row gap-0 overflow-hidden relative">
-          
-          {/* Left Panel: Chat */}
-          <div className="w-full md:w-[400px] flex flex-col h-[40%] md:h-full border-b md:border-b-0 md:border-r border-secondary bg-surface/30 shrink-0">
-             <div className="h-8 border-b border-secondary bg-surface/50 flex items-center px-4 justify-between shrink-0">
-                <span className="text-[10px] font-mono text-tech-dim uppercase tracking-wider">Communication_Link</span>
-                <span className="w-2 h-2 rounded-full bg-primary opacity-50"></span>
-             </div>
-             <ChatInterface 
-               messages={messages} 
-               onSendMessage={handleSendMessage} 
-               isLoading={isLoading}
-             />
-          </div>
+        <main id="workspace-main" className="flex-1 relative overflow-hidden flex flex-col">
+          <SplitPane
+            key={isDesktop ? "desktop-split" : "mobile-split"}
+            split={isDesktop ? "vertical" : "horizontal"}
+            minSize={isDesktop ? 280 : 100}
+            maxSize={isDesktop ? -300 : -100}
+            defaultSize={isDesktop ? 400 : "40%"}
+            primary="first"
+            style={{ position: 'relative', height: '100%', width: '100%' }}
+            pane1Style={{ overflow: 'hidden' }}
+            pane2Style={{ overflow: 'hidden' }}
+            allowResize={true}
+          >
+            {/* Left Panel: Chat */}
+            {/* Added pr-3 (12px) padding right to move scrollbar away from the resizer overlap area */}
+            <div className="flex flex-col h-full w-full border-secondary bg-surface/30 pr-3 min-w-0 min-h-0">
+               <div className="h-8 border-b border-secondary bg-surface/50 flex items-center px-4 justify-between shrink-0">
+                  <span className="text-[10px] font-mono text-tech-dim uppercase tracking-wider">Communication_Link</span>
+                  <span className="w-2 h-2 rounded-full bg-primary opacity-50"></span>
+               </div>
+               <div className="flex-1 min-h-0 overflow-hidden">
+                 <ChatInterface 
+                   messages={messages} 
+                   onSendMessage={handleSendMessage} 
+                   isLoading={isLoading}
+                 />
+               </div>
+            </div>
 
-          {/* Right Panel: Preview & Gallery */}
-          <div className="flex-1 flex flex-col h-[60%] md:h-full relative bg-dot-grid min-w-0">
-             <div className="h-8 border-b border-secondary bg-surface/50 flex items-center px-4 justify-between absolute top-0 left-0 right-0 z-20 backdrop-blur-sm">
-                <span className="text-[10px] font-mono text-tech-dim uppercase tracking-wider truncate mr-2">Viewport // {activeConversation?.title || "IDLE"}</span>
-                <div className="flex gap-1 shrink-0">
-                   <span className="w-1 h-1 bg-tech-dim"></span>
-                   <span className="w-1 h-1 bg-tech-dim"></span>
-                   <span className="w-1 h-1 bg-tech-dim"></span>
-                </div>
-             </div>
-             
-             <div className="flex-1 pt-8 overflow-hidden h-full flex flex-col">
-                <PreviewArea 
-                  svgCode={currentSVG} 
-                  isLoading={isLoading}
-                  historyItems={activeConversation?.svgs || []}
-                  onSelectHistoryItem={handleGallerySelect}
-                />
-             </div>
-          </div>
-
+            {/* Right Panel: Preview & Gallery */}
+            <div className="flex flex-col h-full w-full bg-dot-grid relative min-w-0 min-h-0">
+               <div className="h-8 border-b border-secondary bg-surface/50 flex items-center px-4 justify-between absolute top-0 left-0 right-0 z-20 backdrop-blur-sm">
+                  <span className="text-[10px] font-mono text-tech-dim uppercase tracking-wider truncate mr-2">Viewport // {activeConversation?.title || "IDLE"}</span>
+                  <div className="flex gap-1 shrink-0">
+                     <span className="w-1 h-1 bg-tech-dim"></span>
+                     <span className="w-1 h-1 bg-tech-dim"></span>
+                     <span className="w-1 h-1 bg-tech-dim"></span>
+                  </div>
+               </div>
+               
+               <div className="flex-1 pt-8 overflow-hidden h-full flex flex-col min-h-0">
+                  <PreviewArea 
+                    svgCode={currentSVG} 
+                    isLoading={isLoading}
+                    historyItems={activeConversation?.svgs || []}
+                    onSelectHistoryItem={handleGallerySelect}
+                  />
+               </div>
+            </div>
+          </SplitPane>
         </main>
       </div>
     </div>

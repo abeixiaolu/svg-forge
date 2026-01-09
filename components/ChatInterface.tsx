@@ -31,7 +31,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
   return (
     <div className="flex flex-col h-full overflow-hidden font-mono text-sm relative">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin">
+      <div className={`flex-1 p-4 space-y-6 scrollbar-thin ${messages.length === 0 ? 'overflow-hidden' : 'overflow-y-auto'}`}>
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-tech-dim opacity-40">
              <div className="border border-tech-dim p-4 mb-4 rounded-sm">
