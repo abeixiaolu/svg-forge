@@ -173,12 +173,20 @@ Ensure the SVG adheres strictly to this style description.`;
         return c;
       }));
 
-    } catch (error) {
-       // Add error message to chat
+    } catch (error: any) {
+       console.error("Generation error:", error);
+       
+       let errorContent = "ERR: SYSTEM_FAILURE. PLEASE_RETRY.";
+       const errString = error?.message || error?.toString() || "";
+       
+       if (errString.includes("429") || errString.includes("RESOURCE_EXHAUSTED") || errString.includes("quota")) {
+         errorContent = "ERR: RATE_LIMIT_EXCEEDED. [QUOTA_FULL]. PLEASE_WAIT.";
+       }
+       
        const errorMessage: Message = {
           id: generateId(),
           role: 'model',
-          content: "ERR: SYSTEM_FAILURE. PLEASE_RETRY.",
+          content: errorContent,
           timestamp: Date.now()
        };
        setConversations(prev => prev.map(c => c.id === activeConversationId ? {...c, messages: [...c.messages, errorMessage]} : c));

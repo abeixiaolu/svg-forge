@@ -44,6 +44,12 @@ export const ICON_STYLES: IconStyle[] = [
     previewSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>'
   },
   {
+    id: 'material-animated',
+    name: 'Material Line (Animated)',
+    description: 'Material Design Outlined with Motion. 24px grid, 2px stroke, geometric. MUST include smooth, looping SVG animations (using <animate>, <animateTransform>, or <style> keyframes) appropriate for the icon\'s function (e.g., rotation for settings, pulse for alerts).',
+    previewSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"><animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="360 12 12" dur="3s" repeatCount="indefinite"/></path></svg>'
+  },
+  {
     id: 'material-rounded',
     name: 'Material (Rounded)',
     description: 'Google Material Design (Rounded). Similar to Filled but with softened corners on all elements. Friendly appeal.',
