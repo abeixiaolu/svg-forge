@@ -8,7 +8,9 @@ import StyleSelector from './components/StyleSelector';
 import { ICON_STYLES } from './constants';
 import { PanelLeft, PanelLeftClose, Terminal, Cpu, Activity } from 'lucide-react';
 // @ts-ignore
-import SplitPane from 'react-split-pane';
+import SplitPaneLib from 'react-split-pane';
+
+const SplitPane = SplitPaneLib as unknown as React.ComponentType<any>;
 
 // Polyfill for simple ID generation
 const generateId = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
