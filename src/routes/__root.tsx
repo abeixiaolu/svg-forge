@@ -1,17 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SVG Gen & Edit</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+/// <reference types="vite/client" />
+import type { ReactNode } from "react";
+import {
+  Outlet,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      {
+        charSet: "utf-8",
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      {
+        title: "SVG Gen & Edit",
+      },
+    ],
+    links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        href: "https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
+        rel: "stylesheet",
+      },
+    ],
+  }),
+  component: RootComponent,
+});
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  );
+}
+
+function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <html>
+      <head>
+        <HeadContent />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
       tailwind.config = {
         theme: {
           extend: {
@@ -51,23 +93,27 @@
           }
         }
       }
-    </script>
-    <style>
+          `,
+          }}
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
       body {
         background-color: #050505;
         color: #e4e4e7;
         font-family: 'Chakra Petch', sans-serif;
         overflow: hidden;
       }
-      
+
       /* Tech Grid Background */
       .bg-tech-grid {
-        background-image: 
+        background-image:
           linear-gradient(rgba(39, 39, 42, 0.2) 1px, transparent 1px),
           linear-gradient(90deg, rgba(39, 39, 42, 0.2) 1px, transparent 1px);
         background-size: 24px 24px;
       }
-      
+
       /* Dot Grid */
       .bg-dot-grid {
         background-image: radial-gradient(rgba(113, 113, 122, 0.2) 1px, transparent 1px);
@@ -80,14 +126,14 @@
         height: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: #09090b; 
+        background: #09090b;
       }
       ::-webkit-scrollbar-thumb {
-        background: #27272a; 
+        background: #27272a;
         border-radius: 0;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #FFB800; 
+        background: #FFB800;
       }
 
       /* Corner Borders Utility */
@@ -114,7 +160,7 @@
         right: -1px;
         border-width: 0 1px 1px 0;
       }
-      
+
       .corner-border-hover:hover::before, .corner-border-hover:hover::after {
         width: 100%;
         height: 100%;
@@ -134,9 +180,9 @@
       }
 
       .Resizer:hover {
-        border-color: #FFB800; 
+        border-color: #FFB800;
       }
-      
+
       /* Techy Handle Graphic - Centered Visual indicator */
       .Resizer::after {
         content: "";
@@ -154,17 +200,17 @@
         width: 12px;
         margin: 0 -5px; /* Negative margin to center hit area */
         cursor: col-resize;
-        border-left: 1px solid rgba(39, 39, 42, 0); 
+        border-left: 1px solid rgba(39, 39, 42, 0);
         border-right: 1px solid rgba(39, 39, 42, 0);
       }
-      
+
       /* Visual guide on hover */
       .Resizer.vertical:hover {
         border-left: 1px solid rgba(255, 184, 0, 0.3);
         border-right: 1px solid rgba(255, 184, 0, 0.3);
         background: rgba(255, 255, 255, 0.02);
       }
-      
+
       .Resizer.vertical::after {
         top: 50%;
         left: 50%;
@@ -181,13 +227,13 @@
         border-bottom: 1px solid rgba(39, 39, 42, 0);
         width: 100%;
       }
-      
+
       .Resizer.horizontal:hover {
         border-top: 1px solid rgba(255, 184, 0, 0.3);
         border-bottom: 1px solid rgba(255, 184, 0, 0.3);
         background: rgba(255, 255, 255, 0.02);
       }
-      
+
       .Resizer.horizontal::after {
         left: 50%;
         top: 50%;
@@ -195,23 +241,14 @@
         width: 24px;
         height: 4px;
       }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "uuid": "https://esm.sh/uuid@^13.0.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-split-pane": "https://esm.sh/react-split-pane@0.1.92?external=react,react-dom"
-  }
+          `,
+          }}
+        />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  );
 }
-</script>
-</head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
-</html>
