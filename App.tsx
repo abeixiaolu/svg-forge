@@ -6,7 +6,7 @@ import PreviewArea from './components/PreviewArea';
 import HistorySidebar from './components/HistorySidebar';
 import StyleSelector from './components/StyleSelector';
 import { ICON_STYLES } from './constants';
-import { PanelLeft, PanelLeftClose, Terminal, Cpu, Activity } from 'lucide-react';
+import { Terminal, Cpu, Activity } from 'lucide-react';
 // @ts-ignore
 import SplitPaneLib from 'react-split-pane';
 
@@ -17,6 +17,82 @@ const generateId = () => crypto.randomUUID ? crypto.randomUUID() : Math.random()
 
 const STORAGE_KEY = 'svg_gen_conversations';
 const DEFAULT_TITLE = "UNTITLED_SESSION";
+
+// Custom Tech-themed Toggle Icon - Sharp Corners & Theme Colors
+const SidebarToggleIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className="overflow-visible"
+  >
+    {/* Outer Frame - Sharp Corners, Theme Color */}
+    <path 
+      d="M2 4H22V20H2Z" 
+      className="stroke-primary/40 group-hover:stroke-primary transition-colors duration-300" 
+      strokeWidth="1.5" 
+    />
+    
+    {/* Dynamic Sidebar Divider */}
+    <line 
+      x1={isOpen ? "8" : "3"} 
+      y1="4" 
+      x2={isOpen ? "8" : "3"} 
+      y2="20" 
+      className={`
+        stroke-primary transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+        ${!isOpen ? 'group-hover:translate-x-1' : ''}
+      `}
+      strokeWidth="1.5" 
+    />
+
+    {/* Sidebar Internal details (Square dots) - Only visible when open */}
+    <g className={`transition-all duration-300 ${isOpen ? 'opacity-100 delay-100' : 'opacity-0 -translate-x-2'}`}>
+       <rect x="4.5" y="7.5" width="1" height="1" className="fill-primary" />
+       <rect x="4.5" y="11.5" width="1" height="1" className="fill-primary" />
+       <rect x="4.5" y="15.5" width="1" height="1" className="fill-primary" />
+    </g>
+
+    {/* Content Lines - Sharp caps */}
+    <g>
+       <line 
+         x1={isOpen ? "11" : "6"} y1="8" 
+         x2="19" y2="8" 
+         className="stroke-primary/40 group-hover:stroke-primary transition-all duration-500 delay-0" 
+         strokeWidth="1.5" 
+         strokeLinecap="square" 
+       />
+       <line 
+         x1={isOpen ? "11" : "6"} y1="12" 
+         x2="16" y2="12" 
+         className="stroke-primary/40 group-hover:stroke-primary transition-all duration-500 delay-75" 
+         strokeWidth="1.5" 
+         strokeLinecap="square" 
+       />
+       <line 
+         x1={isOpen ? "11" : "6"} y1="16" 
+         x2="18" y2="16" 
+         className="stroke-primary/40 group-hover:stroke-primary transition-all duration-500 delay-100" 
+         strokeWidth="1.5" 
+         strokeLinecap="square" 
+       />
+    </g>
+    
+    {/* Sharp Arrow Indicator on Hover */}
+    <path 
+      d={isOpen ? "M14 12L12 12M13 11L12 12L13 13" : "M7 12L9 12M8 11L9 12L8 13"}
+      className={`
+        stroke-primary stroke-1
+        opacity-0 group-hover:opacity-100 transition-all duration-300
+        ${isOpen ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}
+      `}
+      strokeLinecap="square"
+      strokeLinejoin="miter"
+    />
+  </svg>
+);
 
 const App: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -246,11 +322,22 @@ Ensure the SVG adheres strictly to this style description.`;
         <header className="h-14 border-b border-secondary flex items-center px-2 md:px-6 justify-between shrink-0 bg-surface/90">
           <div className="flex items-center gap-2 md:gap-4">
             <button 
-              className="text-tech-text hover:text-primary transition-colors p-1"
+              className={`
+                group relative flex items-center justify-center w-8 h-8
+                border transition-all duration-300 ease-out overflow-hidden rounded-none
+                ${isSidebarOpen 
+                  ? 'border-primary/50 bg-primary/10 text-primary' 
+                  : 'border-primary/20 bg-primary/5 text-primary hover:border-primary/50 hover:bg-primary/10'
+                }
+              `}
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+              title={isSidebarOpen ? "COLLAPSE VIEW" : "EXPAND VIEW"}
             >
-              {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeft size={20} />}
+              {/* Decorative corner accents on hover */}
+              <span className="absolute top-0 left-0 w-[2px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="absolute bottom-0 right-0 w-[2px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <SidebarToggleIcon isOpen={isSidebarOpen} />
             </button>
             <div className="flex items-center gap-2 md:gap-3 select-none">
               <div className="w-8 h-8 bg-primary/20 border border-primary text-primary flex items-center justify-center shrink-0">

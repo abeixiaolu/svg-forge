@@ -1,6 +1,6 @@
 import React from 'react';
 import { Conversation } from '../types';
-import { Trash2, Plus, HardDrive, FileCode, X } from 'lucide-react';
+import { Trash2, Plus, FileCode, X } from 'lucide-react';
 
 interface HistorySidebarProps {
   conversations: Conversation[];
@@ -12,6 +12,29 @@ interface HistorySidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// Custom Tech-themed Data/Storage Icon - Sharp Corners
+const DataLogsIcon = () => (
+  <svg 
+    width="18" 
+    height="18" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className="shrink-0"
+  >
+    <path 
+      d="M3 3H21V21H3V3Z" 
+      className="stroke-primary" 
+      strokeWidth="1.5" 
+      strokeLinecap="square"
+    />
+    <line x1="7" y1="9" x2="17" y2="9" className="stroke-primary/60" strokeWidth="1.5" />
+    <line x1="7" y1="13" x2="17" y2="13" className="stroke-primary/60" strokeWidth="1.5" />
+    <rect x="7" y="16" width="2" height="2" className="fill-primary" />
+    <line x1="11" y1="17" x2="17" y2="17" className="stroke-primary/60" strokeWidth="1.5" />
+  </svg>
+);
 
 const HistorySidebar: React.FC<HistorySidebarProps> = ({ 
   conversations, 
@@ -61,7 +84,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({
           {/* Header */}
           <div className="p-3 border-b border-secondary bg-surface-highlight flex items-center justify-between shrink-0 h-14">
             <div className="flex items-center gap-2 text-primary font-bold tracking-wider text-xs">
-              <HardDrive size={14} />
+              <DataLogsIcon />
               DATA_LOGS
             </div>
             <button 
