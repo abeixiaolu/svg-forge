@@ -1,0 +1,5 @@
+{
+  "name": "SVG Forge",
+  "description": "A futuristic, AI-powered SVG generator and editor. Create, refine, and manage pixel-perfect vector icons using natural language conversation. Built with React, Tailwind CSS, and the Google Gemini API.",
+  "requestFramePermissions": []
+}

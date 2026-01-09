@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Gen & Edit</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Chakra Petch"', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'],
+            },
+            colors: {
+              background: '#050505',
+              surface: '#0f0f11',
+              'surface-highlight': '#18181b',
+              primary: '#FFB800', // Amber
+              'primary-dim': '#4d3800',
+              secondary: '#27272a',
+              border: '#27272a',
+              'tech-text': '#e4e4e7',
+              'tech-dim': '#71717a',
+            },
+            backgroundImage: {
+              'grid-pattern': "radial-gradient(circle, #27272a 1px, transparent 1px)",
+              'scanlines': "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))",
+            },
+            animation: {
+              'scan': 'scan 8s linear infinite',
+              'blink': 'blink 1s step-end infinite',
+            },
+            keyframes: {
+              scan: {
+                '0%': { backgroundPosition: '0 0' },
+                '100%': { backgroundPosition: '0 100%' },
+              },
+              blink: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #050505;
+        color: #e4e4e7;
+        font-family: 'Chakra Petch', sans-serif;
+        overflow: hidden;
+      }
+      
+      /* Tech Grid Background */
+      .bg-tech-grid {
+        background-image: 
+          linear-gradient(rgba(39, 39, 42, 0.2) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(39, 39, 42, 0.2) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      
+      /* Dot Grid */
+      .bg-dot-grid {
+        background-image: radial-gradient(rgba(113, 113, 122, 0.2) 1px, transparent 1px);
+        background-size: 16px 16px;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #09090b; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #27272a; 
+        border-radius: 0;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #FFB800; 
+      }
+
+      /* Corner Borders Utility */
+      .corner-border {
+        position: relative;
+      }
+      .corner-border::before, .corner-border::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-color: #FFB800;
+        border-style: solid;
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+      .corner-border::before {
+        top: -1px;
+        left: -1px;
+        border-width: 1px 0 0 1px;
+      }
+      .corner-border::after {
+        bottom: -1px;
+        right: -1px;
+        border-width: 0 1px 1px 0;
+      }
+      
+      .corner-border-hover:hover::before, .corner-border-hover:hover::after {
+        width: 100%;
+        height: 100%;
+        border-color: #FFB800;
+        opacity: 0.1;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "uuid": "https://esm.sh/uuid@^13.0.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
